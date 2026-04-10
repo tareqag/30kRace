@@ -30,6 +30,7 @@
   --white-dim:#f0f0f010;
   --green:#2d6a4f;
   --green-text:#52b788;
+  --red-text:#e05555;
   --font-display:'Syne',sans-serif;
   --font-mono:'DM Mono',monospace;
   --r-sm:10px;
@@ -41,11 +42,11 @@
 html,body{height:100%;overflow:hidden;background:var(--bg)}
 #app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
 
-/* ── SCREENS ── */
+/* SCREENS */
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity 0.2s,transform 0.25s;opacity:0;pointer-events:none;transform:translateY(12px)}
 .screen.visible{opacity:1;pointer-events:all;transform:translateY(0)}
 
-/* ── LOCK SCREEN ── */
+/* LOCK SCREEN */
 #lock{background:var(--bg);align-items:center;justify-content:flex-start;padding-top:80px;gap:0}
 .lock-wordmark{font-family:var(--font-mono);font-size:11px;letter-spacing:0.22em;color:var(--text4);margin-bottom:56px}
 .lock-heading{font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--text);letter-spacing:-0.8px;margin-bottom:8px}
@@ -63,35 +64,47 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .lock-error{font-family:var(--font-mono);font-size:12px;color:#c0392b;margin-top:20px;min-height:16px;letter-spacing:0.04em;transition:opacity 0.2s}
 .lock-error.hidden{opacity:0}
 
-/* ── MAIN APP ── */
+/* MAIN APP */
 #main{background:var(--bg)}
 .app-body{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .app-body::-webkit-scrollbar{display:none}
 .tab-content{display:none;padding:0 0 100px}
 .tab-content.active{display:block}
 
-/* ── NAV ── */
+/* NAV */
 .nav{height:72px;background:var(--s1);border-top:1px solid var(--border);display:flex;align-items:stretch;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;color:var(--text4);transition:color 0.15s;border:none;background:none}
 .nav-item svg{width:22px;height:22px;transition:opacity 0.15s}
 .nav-item span{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;font-weight:500}
 .nav-item.active{color:var(--text)}
 
-/* ── SHARED ── */
+/* SHARED */
 .page-top{padding:20px 18px 12px;display:flex;align-items:flex-start;justify-content:space-between}
 .page-title{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);letter-spacing:-0.6px}
 .page-sub{font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-top:4px;letter-spacing:0.04em}
-.px{padding-left:18px;padding-right:18px}
 .section-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text4);margin-bottom:10px}
 .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
 .divider{height:1px;background:var(--border)}
 
-/* ── BOARD TAB ── */
+/* BOARD */
 .board-header{padding:24px 18px 0;display:flex;align-items:flex-start;justify-content:space-between}
 .greet-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text4);margin-bottom:5px}
 .greet-name{font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--text);letter-spacing:-0.8px}
-.avatar-circle{width:40px;height:40px;border-radius:50%;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;color:var(--text3);cursor:pointer;flex-shrink:0}
 
+/* AVATAR + DROPDOWN */
+.avatar-wrap{position:relative;flex-shrink:0}
+.avatar-circle{width:40px;height:40px;border-radius:50%;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;color:var(--text3);cursor:pointer;flex-shrink:0;user-select:none}
+.avatar-circle:active{background:var(--s4)}
+.dropdown{position:absolute;top:50px;right:0;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r-md);min-width:186px;overflow:hidden;z-index:200;box-shadow:0 8px 32px #00000088;opacity:0;pointer-events:none;transform:translateY(-6px) scale(0.97);transition:opacity 0.15s,transform 0.15s;transform-origin:top right}
+.dropdown.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
+.dd-item{display:flex;align-items:center;gap:11px;padding:14px 16px;font-family:var(--font-mono);font-size:12px;color:var(--text2);cursor:pointer;transition:background 0.1s;letter-spacing:0.03em}
+.dd-item:active{background:var(--s3)}
+.dd-item svg{width:14px;height:14px;flex-shrink:0;opacity:0.55}
+.dd-divider{height:1px;background:var(--border)}
+.dd-item.danger{color:var(--red-text)}
+.dd-item.danger svg{opacity:0.75}
+
+/* PROGRESS */
 .my-progress{margin:16px 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);padding:18px}
 .mp-label{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.1em;margin-bottom:10px}
 .mp-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
@@ -103,6 +116,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .prog-fill{height:100%;background:var(--text);border-radius:2px;transition:width 0.6s ease}
 .mp-remain{font-family:var(--font-mono);font-size:11px;color:var(--text4);letter-spacing:0.03em}
 
+/* LEADERBOARD */
 .lb-wrap{margin:0 18px 20px}
 .lb-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
 .lb-row{display:flex;align-items:center;gap:14px;padding:15px 16px;position:relative}
@@ -118,7 +132,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .lb-bar-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .lb-mini-track{flex:1;height:2px;background:var(--s4);border-radius:1px;overflow:hidden}
 .lb-mini-fill{height:100%;border-radius:1px;transition:width 0.6s ease}
-.lb-fill-gold{background:var(--gold-dim);background:var(--gold);}
+.lb-fill-gold{background:var(--gold)}
 .lb-fill-me{background:var(--text)}
 .lb-fill-dim{background:var(--s4)}
 .lb-pct-label{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.04em;min-width:32px;text-align:right}
@@ -126,6 +140,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .lb-amount{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text2)}
 .lb-amount.is-me{color:var(--text)}
 
+/* MILESTONES */
 .mile-wrap{margin:0 18px 20px}
 .mile-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
 .mile-row{display:flex;align-items:center;gap:14px;padding:13px 16px}
@@ -141,7 +156,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .mile-who{font-family:var(--font-mono);font-size:10px;color:var(--text4);text-align:right}
 .mile-who.done{color:var(--text3)}
 
-/* ── LOG TAB ── */
+/* LOG FORM */
 .log-form{margin:0 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px;display:flex;flex-direction:column;gap:16px}
 .f-label{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.1em;display:block;margin-bottom:7px}
 .f-amount-wrap{position:relative}
@@ -160,11 +175,13 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
 .submit-btn:disabled{opacity:0.25;cursor:not-allowed}
 .form-msg{font-family:var(--font-mono);font-size:12px;text-align:center;min-height:16px;letter-spacing:0.04em;transition:opacity 0.3s}
 .form-msg.success{color:var(--green-text)}
+.form-msg.error{color:var(--red-text)}
 .form-msg.hidden{opacity:0}
 
-/* ── ACTIVITY TAB ── */
+/* ACTIVITY */
 .act-list{margin:0 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
-.act-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px}
+.act-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;cursor:pointer;transition:background 0.1s;-webkit-tap-highlight-color:transparent}
+.act-row:active{background:var(--s2)}
 .act-row+.act-row{border-top:1px solid var(--border)}
 .act-badge{font-family:var(--font-mono);font-size:9px;font-weight:500;letter-spacing:0.1em;padding:4px 9px;border-radius:6px;flex-shrink:0;margin-top:2px;white-space:nowrap}
 .badge-T{background:#0d1f0d;color:#52b788}
@@ -173,11 +190,47 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
 .act-info{flex:1;min-width:0}
 .act-source{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .act-meta{font-family:var(--font-mono);font-size:11px;color:var(--text4);margin-top:3px;letter-spacing:0.03em}
-.act-amount{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text2);white-space:nowrap;flex-shrink:0}
+.act-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.act-amount{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text2);white-space:nowrap}
+.act-edit-tag{font-family:var(--font-mono);font-size:9px;color:var(--text4);letter-spacing:0.08em}
 .empty-state{padding:48px 20px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text4);letter-spacing:0.06em}
 
-/* ── TOAST ── */
-.toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--s3);border:1px solid var(--border2);border-radius:var(--r-md);padding:12px 20px;font-family:var(--font-mono);font-size:12px;color:var(--text2);letter-spacing:0.04em;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;z-index:100}
+/* BOTTOM SHEET OVERLAY */
+.sheet-overlay{position:absolute;inset:0;background:#000000aa;z-index:300;opacity:0;pointer-events:none;transition:opacity 0.22s}
+.sheet-overlay.open{opacity:1;pointer-events:all}
+
+/* BOTTOM SHEET BASE */
+.bottom-sheet{position:absolute;left:0;right:0;bottom:0;background:var(--s1);border:1px solid var(--border2);border-radius:var(--r-xl) var(--r-xl) 0 0;z-index:301;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:92vh;overflow-y:auto;scrollbar-width:none}
+.bottom-sheet::-webkit-scrollbar{display:none}
+.bottom-sheet.open{transform:translateY(0)}
+.sheet-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:14px auto 0}
+.sheet-top{padding:18px 20px 6px;display:flex;align-items:center;justify-content:space-between}
+.sheet-title{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.4px}
+.sheet-cancel{font-family:var(--font-mono);font-size:11px;color:var(--text4);cursor:pointer;padding:4px 0;letter-spacing:0.08em}
+.sheet-body{padding:16px 20px 40px;display:flex;flex-direction:column;gap:14px}
+
+/* EDIT SHEET SPECIFICS */
+.edit-who{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.12em;margin-bottom:-4px}
+.btn-delete{background:transparent;border:1px solid #c0392b55;color:var(--red-text);border-radius:var(--r-md);padding:14px;font-family:var(--font-display);font-size:14px;font-weight:600;cursor:pointer;width:100%;transition:background 0.15s,border-color 0.15s;margin-top:2px}
+.btn-delete:active{background:#c0392b18;border-color:#c0392b88}
+
+/* CHANGE PIN SHEET SPECIFICS */
+.pm-step{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.14em;text-align:center;margin-bottom:14px}
+.pm-dots{display:flex;gap:16px;justify-content:center;margin-bottom:22px}
+.pm-dot{width:11px;height:11px;border-radius:50%;background:var(--s4);border:1.5px solid var(--border2);transition:all 0.12s}
+.pm-dot.filled{background:var(--text);border-color:var(--text);transform:scale(1.1)}
+.pm-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.pm-key{height:62px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-family:var(--font-display);font-size:22px;font-weight:500;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.1s,transform 0.08s;user-select:none}
+.pm-key:active{background:var(--s4);transform:scale(0.94)}
+.pm-key.ghost{background:transparent;border-color:transparent;pointer-events:none}
+.pm-key.del-key{font-size:18px;color:var(--text3)}
+.pm-msg{font-family:var(--font-mono);font-size:12px;text-align:center;min-height:16px;letter-spacing:0.04em;margin-top:4px}
+.pm-msg.error{color:var(--red-text)}
+.pm-msg.success{color:var(--green-text)}
+.pm-msg.hidden{opacity:0}
+
+/* TOAST */
+.toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--s3);border:1px solid var(--border2);border-radius:var(--r-md);padding:12px 20px;font-family:var(--font-mono);font-size:12px;color:var(--text2);letter-spacing:0.04em;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;z-index:400}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -216,7 +269,6 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
 
   <!-- MAIN APP -->
   <div id="main" class="screen">
-
     <div class="app-body" id="app-body">
 
       <!-- BOARD -->
@@ -226,7 +278,20 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
             <div class="greet-label">WELCOME BACK</div>
             <div class="greet-name" id="greet-name">—</div>
           </div>
-          <div class="avatar-circle" id="avatar" onclick="logout()">—</div>
+          <div class="avatar-wrap">
+            <div class="avatar-circle" id="avatar" onclick="toggleDropdown(event)">—</div>
+            <div class="dropdown" id="dropdown">
+              <div class="dd-item" onclick="openPinSheet()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Change passcode
+              </div>
+              <div class="dd-divider"></div>
+              <div class="dd-item danger" onclick="logout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign out
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="my-progress" id="my-progress">
@@ -303,7 +368,7 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
         <div class="page-top">
           <div>
             <div class="page-title">Activity</div>
-            <div class="page-sub">All entries · most recent first</div>
+            <div class="page-sub">Tap your entries to edit or delete</div>
           </div>
         </div>
         <div class="act-list" id="act-list"></div>
@@ -327,6 +392,88 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
       </button>
     </nav>
 
+    <!-- SHARED OVERLAY -->
+    <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheets()"></div>
+
+    <!-- EDIT ENTRY SHEET -->
+    <div class="bottom-sheet" id="edit-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <div class="sheet-title">Edit entry</div>
+        <div class="sheet-cancel" onclick="closeSheets()">CANCEL</div>
+      </div>
+      <div class="sheet-body">
+        <div class="edit-who" id="edit-who"></div>
+        <div>
+          <label class="f-label">AMOUNT</label>
+          <div class="f-amount-wrap">
+            <span class="f-currency">$</span>
+            <input class="f-amount" id="e-amount" type="number" min="1" inputmode="decimal">
+          </div>
+        </div>
+        <div>
+          <label class="f-label">SOURCE / DESCRIPTION</label>
+          <input class="f-input" id="e-source" type="text">
+        </div>
+        <div class="f-row">
+          <div>
+            <label class="f-label">TYPE</label>
+            <select class="f-select" id="e-type">
+              <option value="Sale">Sale</option>
+              <option value="Client deal">Client deal</option>
+              <option value="Recurring">Recurring</option>
+              <option value="Product">Product</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label">DATE</label>
+            <input class="f-input" id="e-date" type="date">
+          </div>
+        </div>
+        <div>
+          <label class="f-label">NOTES</label>
+          <input class="f-input" id="e-notes" type="text" placeholder="Any context...">
+        </div>
+        <button class="submit-btn" onclick="saveEdit()">Save changes</button>
+        <button class="btn-delete" onclick="deleteEntry()">Delete entry</button>
+        <div class="form-msg hidden" id="edit-msg"></div>
+      </div>
+    </div>
+
+    <!-- CHANGE PASSCODE SHEET -->
+    <div class="bottom-sheet" id="pin-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-top">
+        <div class="sheet-title">Change passcode</div>
+        <div class="sheet-cancel" onclick="closeSheets()">CANCEL</div>
+      </div>
+      <div class="sheet-body">
+        <div class="pm-step" id="pm-step">ENTER CURRENT PASSCODE</div>
+        <div class="pm-dots">
+          <div class="pm-dot" id="pm-dot-0"></div>
+          <div class="pm-dot" id="pm-dot-1"></div>
+          <div class="pm-dot" id="pm-dot-2"></div>
+          <div class="pm-dot" id="pm-dot-3"></div>
+        </div>
+        <div class="pm-numpad">
+          <div class="pm-key" onclick="pmPress('1')">1</div>
+          <div class="pm-key" onclick="pmPress('2')">2</div>
+          <div class="pm-key" onclick="pmPress('3')">3</div>
+          <div class="pm-key" onclick="pmPress('4')">4</div>
+          <div class="pm-key" onclick="pmPress('5')">5</div>
+          <div class="pm-key" onclick="pmPress('6')">6</div>
+          <div class="pm-key" onclick="pmPress('7')">7</div>
+          <div class="pm-key" onclick="pmPress('8')">8</div>
+          <div class="pm-key" onclick="pmPress('9')">9</div>
+          <div class="pm-key ghost"></div>
+          <div class="pm-key" onclick="pmPress('0')">0</div>
+          <div class="pm-key del-key" onclick="pmDel()">⌫</div>
+        </div>
+        <div class="pm-msg hidden" id="pm-msg"></div>
+      </div>
+    </div>
+
     <div class="toast" id="toast"></div>
   </div>
 
@@ -335,20 +482,29 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
 const GOAL = 30000;
 const MILESTONES = [5000, 10000, 15000, 20000, 25000, 30000];
 const PLAYERS = {
-  Tareq:  { pin: '1234', initials: 'TQ', badge: 'badge-T' },
-  Daniel: { pin: '1234', initials: 'DN', badge: 'badge-D' },
-  Jay:    { pin: '1234', initials: 'JY', badge: 'badge-J' }
+  Tareq:  { initials: 'TQ', badge: 'badge-T' },
+  Daniel: { initials: 'DN', badge: 'badge-D' },
+  Jay:    { initials: 'JY', badge: 'badge-J' }
 };
 
 let state = {
   player: null,
-  entries: [],
+  entries: [],   // { _key, player, amount, source, type, date, notes, ts }
   pins: { Tareq: '1234', Daniel: '1234', Jay: '1234' }
 };
 
 let pinBuf = '';
 let db = null;
 
+// PIN CHANGE STATE
+let pmPhase = 'current'; // 'current' | 'new' | 'confirm'
+let pmBuf = '';
+let pmNewPin = '';
+
+// EDIT STATE
+let editKey = null;
+
+/* ─── FIREBASE ─── */
 function initFirebase() {
   const cfg = {
     apiKey: "AIzaSyCNIS3a4kpa8zRhT1oY4rS0_nTTG-NA1EU",
@@ -362,75 +518,59 @@ function initFirebase() {
   firebase.initializeApp(cfg);
   db = firebase.database();
 
-  // Live listener — updates board in real time across all phones
   db.ref('r30k').on('value', snap => {
     const d = snap.val();
     if (d) {
-      state.entries = d.entries ? Object.values(d.entries) : [];
+      state.entries = d.entries
+        ? Object.entries(d.entries).map(([k, v]) => ({ ...v, _key: k }))
+        : [];
       if (d.pins) state.pins = { ...state.pins, ...d.pins };
     } else {
       state.entries = [];
     }
-    // Re-render whichever tab is active
-    const activeTab = document.querySelector('.tab-content.active');
-    if (activeTab && activeTab.id === 'tab-board' && state.player) renderBoard();
-    if (activeTab && activeTab.id === 'tab-activity' && state.player) renderActivity();
+    if (!state.player) return;
+    const active = document.querySelector('.tab-content.active');
+    if (active?.id === 'tab-board') renderBoard();
+    if (active?.id === 'tab-activity') renderActivity();
   });
 }
 
-async function saveEntry(entry) {
-  try {
-    await db.ref('r30k/entries').push(entry);
-  } catch(e) { console.error(e); }
-}
+async function fbSaveEntry(e)  { try { await db.ref('r30k/entries').push(e); } catch(err) { console.error(err); } }
+async function fbUpdateEntry(k, d) { try { await db.ref('r30k/entries/' + k).update(d); } catch(err) { console.error(err); } }
+async function fbDeleteEntry(k)    { try { await db.ref('r30k/entries/' + k).remove(); } catch(err) { console.error(err); } }
+async function fbSavePins()        { try { await db.ref('r30k/pins').set(state.pins); } catch(err) { console.error(err); } }
 
-async function savePins() {
-  try {
-    await db.ref('r30k/pins').set(state.pins);
-  } catch(e) { console.error(e); }
-}
-
-function fmt(n) {
-  return '$' + Math.round(n).toLocaleString('en-AU');
-}
-
-function fmtDate(ts) {
-  return new Date(ts).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
-}
-
+/* ─── HELPERS ─── */
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-AU'); }
+function fmtDate(ts) { return new Date(ts).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }); }
 function getTotals() {
   const t = {};
   Object.keys(PLAYERS).forEach(p => t[p] = 0);
-  state.entries.forEach(e => t[e.player] = (t[e.player] || 0) + e.amount);
+  state.entries.forEach(e => { t[e.player] = (t[e.player] || 0) + e.amount; });
   return t;
 }
 
-/* ── PIN ── */
+/* ─── LOCK SCREEN ─── */
 function numPress(d) {
   if (pinBuf.length >= 4) return;
   pinBuf += d;
   updateDots();
   if (pinBuf.length === 4) setTimeout(checkPin, 80);
 }
-
 function numDel() {
   pinBuf = pinBuf.slice(0, -1);
   updateDots();
   document.getElementById('lock-error').classList.add('hidden');
 }
-
 function updateDots() {
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 4; i++)
     document.getElementById('dot-' + i).classList.toggle('filled', i < pinBuf.length);
-  }
 }
-
 function checkPin() {
-  for (const [name, cfg] of Object.entries(PLAYERS)) {
+  for (const name of Object.keys(PLAYERS)) {
     if (pinBuf === state.pins[name]) {
       state.player = name;
-      pinBuf = '';
-      updateDots();
+      pinBuf = ''; updateDots();
       document.getElementById('lock').classList.remove('visible');
       document.getElementById('main').classList.add('visible');
       initApp();
@@ -438,21 +578,20 @@ function checkPin() {
     }
   }
   const dots = document.getElementById('pin-dots');
-  dots.classList.add('shake');
+  dots.style.animation = 'none';
+  requestAnimationFrame(() => { dots.style.animation = ''; dots.classList.add('shake'); });
   document.getElementById('lock-error').classList.remove('hidden');
   setTimeout(() => { dots.classList.remove('shake'); pinBuf = ''; updateDots(); }, 400);
 }
-
 function logout() {
-  state.player = null;
-  pinBuf = '';
-  updateDots();
+  closeDropdown(); closeSheets();
+  state.player = null; pinBuf = ''; updateDots();
   document.getElementById('lock-error').classList.add('hidden');
   document.getElementById('main').classList.remove('visible');
   document.getElementById('lock').classList.add('visible');
 }
 
-/* ── APP INIT ── */
+/* ─── INIT ─── */
 function initApp() {
   const p = state.player;
   document.getElementById('greet-name').textContent = p;
@@ -462,8 +601,9 @@ function initApp() {
   switchTab('board');
 }
 
-/* ── TABS ── */
+/* ─── TABS ─── */
 function switchTab(tab) {
+  closeDropdown();
   ['board','log','activity'].forEach(t => {
     document.getElementById('tab-' + t).classList.toggle('active', t === tab);
     document.getElementById('nav-' + t).classList.toggle('active', t === tab);
@@ -473,7 +613,17 @@ function switchTab(tab) {
   if (tab === 'activity') renderActivity();
 }
 
-/* ── BOARD ── */
+/* ─── DROPDOWN ─── */
+function toggleDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('dropdown').classList.toggle('open');
+}
+function closeDropdown() {
+  document.getElementById('dropdown').classList.remove('open');
+}
+document.addEventListener('click', () => closeDropdown());
+
+/* ─── BOARD ─── */
 function renderBoard() {
   const totals = getTotals();
   const p = state.player;
@@ -488,10 +638,7 @@ function renderBoard() {
 
   const sorted = Object.keys(PLAYERS).sort((a, b) => totals[b] - totals[a]);
   const rankClasses = ['gold', 'silver', ''];
-  const fillClasses = ['lb-fill-gold', 'lb-fill-me', 'lb-fill-dim'];
-
-  const lb = document.getElementById('lb-card');
-  lb.innerHTML = sorted.map((name, i) => {
+  document.getElementById('lb-card').innerHTML = sorted.map((name, i) => {
     const total = totals[name];
     const pct = Math.min(100, (total / GOAL) * 100);
     const isMe = name === p;
@@ -505,18 +652,15 @@ function renderBoard() {
           <div class="lb-pct-label">${Math.round(pct)}%</div>
         </div>
       </div>
-      <div class="lb-right">
-        <div class="lb-amount${isMe ? ' is-me' : ''}">${fmt(total)}</div>
-      </div>
+      <div class="lb-right"><div class="lb-amount${isMe ? ' is-me' : ''}">${fmt(total)}</div></div>
     </div>`;
   }).join('');
 
-  const miles = document.getElementById('mile-card');
-  miles.innerHTML = MILESTONES.map(m => {
+  document.getElementById('mile-card').innerHTML = MILESTONES.map(m => {
     const hitters = Object.keys(PLAYERS).filter(n => totals[n] >= m);
     const isWin = m === GOAL;
     const done = hitters.length > 0;
-    const next = !done && Object.values(totals).some(v => v > 0) && MILESTONES.find(x => Object.values(totals).every(v => v < x)) === m;
+    const next = !done && MILESTONES.find(x => Object.values(totals).every(v => v < x)) === m;
     const dotClass = done ? 'done' : (next ? 'next' : '');
     const labelClass = done ? 'done' : (next ? 'next' : isWin ? 'win' : '');
     return `<div class="mile-row">
@@ -527,56 +671,150 @@ function renderBoard() {
   }).join('');
 }
 
-/* ── LOG ENTRY ── */
+/* ─── LOG ENTRY ─── */
 function submitEntry() {
   const amount = parseFloat(document.getElementById('f-amount').value);
   const source = document.getElementById('f-source').value.trim();
-  const type = document.getElementById('f-type').value;
-  const date = document.getElementById('f-date').value;
-  const notes = document.getElementById('f-notes').value.trim();
-
-  if (!amount || amount <= 0) { showFormMsg('Enter a valid amount', false); return; }
-  if (!source) { showFormMsg('Enter a source / description', false); return; }
-
-  const entry = { player: state.player, amount, source, type, date, notes, ts: Date.now() };
-  saveEntry(entry);
-
+  const type   = document.getElementById('f-type').value;
+  const date   = document.getElementById('f-date').value;
+  const notes  = document.getElementById('f-notes').value.trim();
+  if (!amount || amount <= 0) { showFormMsg('form-msg', 'Enter a valid amount', false); return; }
+  if (!source) { showFormMsg('form-msg', 'Enter a source / description', false); return; }
+  fbSaveEntry({ player: state.player, amount, source, type, date, notes, ts: Date.now() });
   document.getElementById('f-amount').value = '';
   document.getElementById('f-source').value = '';
   document.getElementById('f-notes').value = '';
-  showFormMsg('Entry added!', true);
+  showFormMsg('form-msg', 'Entry added!', true);
   showToast('+ ' + fmt(amount) + ' logged');
 }
-
-function showFormMsg(msg, ok) {
-  const el = document.getElementById('form-msg');
+function showFormMsg(id, msg, ok) {
+  const el = document.getElementById(id);
   el.textContent = msg;
-  el.className = 'form-msg ' + (ok ? 'success' : '');
+  el.className = 'form-msg ' + (ok ? 'success' : 'error');
   setTimeout(() => el.classList.add('hidden'), 2500);
 }
 
-/* ── ACTIVITY ── */
+/* ─── ACTIVITY ─── */
 function renderActivity() {
   const list = document.getElementById('act-list');
-  if (state.entries.length === 0) {
-    list.innerHTML = '<div class="empty-state">NO ENTRIES YET</div>';
-    return;
-  }
+  if (!state.entries.length) { list.innerHTML = '<div class="empty-state">NO ENTRIES YET</div>'; return; }
   const sorted = [...state.entries].sort((a, b) => b.ts - a.ts);
   list.innerHTML = sorted.map(e => {
     const initial = e.player[0];
-    return `<div class="act-row">
+    const mine = e.player === state.player;
+    return `<div class="act-row" onclick="${mine ? `openEditSheet('${e._key}')` : ''}">
       <div class="act-badge badge-${initial}">${e.player}</div>
       <div class="act-info">
         <div class="act-source">${e.source}</div>
         <div class="act-meta">${e.type} · ${e.date || fmtDate(e.ts)}</div>
       </div>
-      <div class="act-amount">+${fmt(e.amount)}</div>
+      <div class="act-right">
+        <div class="act-amount">+${fmt(e.amount)}</div>
+        ${mine ? '<div class="act-edit-tag">TAP TO EDIT</div>' : ''}
+      </div>
     </div>`;
   }).join('');
 }
 
-/* ── TOAST ── */
+/* ─── EDIT SHEET ─── */
+function openEditSheet(key) {
+  const e = state.entries.find(x => x._key === key);
+  if (!e) return;
+  editKey = key;
+  document.getElementById('edit-who').textContent = 'ENTRY BY ' + e.player.toUpperCase();
+  document.getElementById('e-amount').value = e.amount;
+  document.getElementById('e-source').value = e.source;
+  document.getElementById('e-type').value   = e.type;
+  document.getElementById('e-date').value   = e.date || '';
+  document.getElementById('e-notes').value  = e.notes || '';
+  document.getElementById('edit-msg').className = 'form-msg hidden';
+  openSheet('edit-sheet');
+}
+async function saveEdit() {
+  const amount = parseFloat(document.getElementById('e-amount').value);
+  const source = document.getElementById('e-source').value.trim();
+  const type   = document.getElementById('e-type').value;
+  const date   = document.getElementById('e-date').value;
+  const notes  = document.getElementById('e-notes').value.trim();
+  if (!amount || amount <= 0) { showFormMsg('edit-msg', 'Enter a valid amount', false); return; }
+  if (!source) { showFormMsg('edit-msg', 'Enter a source / description', false); return; }
+  await fbUpdateEntry(editKey, { amount, source, type, date, notes });
+  closeSheets();
+  showToast('Entry updated');
+}
+async function deleteEntry() {
+  if (!confirm('Delete this entry? This can\'t be undone.')) return;
+  await fbDeleteEntry(editKey);
+  closeSheets();
+  showToast('Entry deleted');
+}
+
+/* ─── CHANGE PASSCODE SHEET ─── */
+function openPinSheet() {
+  closeDropdown();
+  pmPhase = 'current'; pmBuf = ''; pmNewPin = '';
+  updatePmDots();
+  document.getElementById('pm-step').textContent = 'ENTER CURRENT PASSCODE';
+  document.getElementById('pm-msg').className = 'pm-msg hidden';
+  openSheet('pin-sheet');
+}
+function pmPress(d) {
+  if (pmBuf.length >= 4) return;
+  pmBuf += d;
+  updatePmDots();
+  if (pmBuf.length === 4) setTimeout(handlePm, 80);
+}
+function pmDel() { pmBuf = pmBuf.slice(0, -1); updatePmDots(); }
+function updatePmDots() {
+  for (let i = 0; i < 4; i++)
+    document.getElementById('pm-dot-' + i).classList.toggle('filled', i < pmBuf.length);
+}
+function handlePm() {
+  if (pmPhase === 'current') {
+    if (pmBuf !== state.pins[state.player]) {
+      setPmMsg('Incorrect passcode', false);
+      pmBuf = ''; updatePmDots(); return;
+    }
+    pmPhase = 'new'; pmBuf = ''; updatePmDots();
+    document.getElementById('pm-step').textContent = 'ENTER NEW PASSCODE';
+    document.getElementById('pm-msg').className = 'pm-msg hidden';
+  } else if (pmPhase === 'new') {
+    pmNewPin = pmBuf;
+    pmPhase = 'confirm'; pmBuf = ''; updatePmDots();
+    document.getElementById('pm-step').textContent = 'CONFIRM NEW PASSCODE';
+    document.getElementById('pm-msg').className = 'pm-msg hidden';
+  } else {
+    if (pmBuf !== pmNewPin) {
+      setPmMsg('Passcodes don\'t match — try again', false);
+      pmPhase = 'new'; pmBuf = ''; pmNewPin = ''; updatePmDots();
+      document.getElementById('pm-step').textContent = 'ENTER NEW PASSCODE';
+      return;
+    }
+    state.pins[state.player] = pmNewPin;
+    fbSavePins();
+    setPmMsg('Passcode updated!', true);
+    setTimeout(() => closeSheets(), 1100);
+  }
+}
+function setPmMsg(msg, ok) {
+  const el = document.getElementById('pm-msg');
+  el.textContent = msg;
+  el.className = 'pm-msg ' + (ok ? 'success' : 'error');
+}
+
+/* ─── SHEET HELPERS ─── */
+function openSheet(id) {
+  document.getElementById('sheet-overlay').classList.add('open');
+  document.getElementById(id).classList.add('open');
+}
+function closeSheets() {
+  document.getElementById('sheet-overlay').classList.remove('open');
+  document.getElementById('edit-sheet').classList.remove('open');
+  document.getElementById('pin-sheet').classList.remove('open');
+  editKey = null;
+}
+
+/* ─── TOAST ─── */
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -584,7 +822,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-/* ── BOOT ── */
+/* ─── BOOT ─── */
 initFirebase();
 </script>
 </body>
