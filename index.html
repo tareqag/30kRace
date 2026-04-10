@@ -31,6 +31,8 @@
   --green:#2d6a4f;
   --green-text:#52b788;
   --red-text:#e05555;
+  --fire:#ff6b35;
+  --fire-dim:#ff6b3518;
   --font-display:'Syne',sans-serif;
   --font-mono:'DM Mono',monospace;
   --r-sm:10px;
@@ -78,6 +80,16 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .nav-item span{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;font-weight:500}
 .nav-item.active{color:var(--text)}
 
+/* NOTIFICATION BADGE */
+.nav-item{position:relative}
+.nav-badge{position:absolute;top:8px;right:calc(50% - 18px);width:7px;height:7px;border-radius:50%;background:#e05555;border:1.5px solid var(--bg);display:none}
+.nav-badge.visible{display:block}
+
+/* NEW DIVIDER */
+.act-new-divider{display:flex;align-items:center;gap:10px;padding:8px 16px;position:sticky;top:0;z-index:10;background:var(--bg)}
+.act-new-divider::before,.act-new-divider::after{content:'';flex:1;height:1px;background:var(--red-text);opacity:0.35}
+.act-new-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.18em;color:var(--red-text);opacity:0.8;white-space:nowrap}
+
 /* SHARED */
 .page-top{padding:20px 18px 12px;display:flex;align-items:flex-start;justify-content:space-between}
 .page-title{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);letter-spacing:-0.6px}
@@ -114,7 +126,31 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .mp-of{font-family:var(--font-mono);font-size:11px;color:var(--text4);margin-top:3px}
 .prog-track{height:3px;background:var(--s4);border-radius:2px;overflow:hidden;margin-bottom:8px}
 .prog-fill{height:100%;background:var(--text);border-radius:2px;transition:width 0.6s ease}
+.mp-stats-row{display:flex;gap:0;margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
+.mp-stat{flex:1;text-align:center}
+.mp-stat+.mp-stat{border-left:1px solid var(--border)}
+.mp-stat-val{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text2);letter-spacing:-0.3px}
+.mp-stat-lbl{font-family:var(--font-mono);font-size:9px;color:var(--text4);letter-spacing:0.08em;margin-top:3px}
 .mp-remain{font-family:var(--font-mono);font-size:11px;color:var(--text4);letter-spacing:0.03em}
+
+/* WEEKLY SPRINT */
+.sprint-wrap{margin:0 18px 20px}
+.sprint-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
+.sprint-header{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sprint-title{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text2)}
+.sprint-dates{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.06em}
+.sprint-row{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.sprint-row+.sprint-row{border-top:1px solid var(--border)}
+.sprint-rank{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text4);min-width:18px;text-align:center;flex-shrink:0}
+.sprint-rank.s-gold{color:var(--gold)}
+.sprint-rank.s-silver{color:#888}
+.sprint-name{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--text3);flex:1}
+.sprint-name.is-me{color:var(--text2)}
+.sprint-name.s-winner{color:var(--gold)}
+.sprint-amount{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--text3)}
+.sprint-amount.is-me{color:var(--text2)}
+.sprint-amount.s-winner{color:var(--gold)}
+.sprint-fire{font-size:13px;margin-left:4px}
 
 /* LEADERBOARD */
 .lb-wrap{margin:0 18px 20px}
@@ -126,10 +162,12 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .lb-rank.gold{color:var(--gold)}
 .lb-rank.silver{color:#888}
 .lb-info{flex:1;min-width:0}
+.lb-name-row{display:flex;align-items:center;gap:6px;margin-bottom:2px}
 .lb-name{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text2)}
 .lb-name.is-me{color:var(--text)}
-.lb-you-tag{font-family:var(--font-mono);font-size:9px;color:var(--text4);letter-spacing:0.08em;margin-left:6px}
-.lb-bar-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.lb-you-tag{font-family:var(--font-mono);font-size:9px;color:var(--text4);letter-spacing:0.08em}
+.lb-fire-tag{font-size:12px}
+.lb-meta-row{display:flex;align-items:center;gap:8px;margin-top:5px}
 .lb-mini-track{flex:1;height:2px;background:var(--s4);border-radius:1px;overflow:hidden}
 .lb-mini-fill{height:100%;border-radius:1px;transition:width 0.6s ease}
 .lb-fill-gold{background:var(--gold)}
@@ -139,6 +177,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .lb-right{text-align:right;flex-shrink:0}
 .lb-amount{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text2)}
 .lb-amount.is-me{color:var(--text)}
+.lb-velocity{font-family:var(--font-mono);font-size:10px;color:var(--text4);margin-top:4px;letter-spacing:0.03em}
+.lb-velocity.active{color:var(--green-text)}
+.lb-last{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.03em;margin-top:2px}
 
 /* MILESTONES */
 .mile-wrap{margin:0 18px 20px}
@@ -179,6 +220,10 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
 .form-msg.hidden{opacity:0}
 
 /* ACTIVITY */
+.act-filters{display:flex;gap:8px;padding:0 18px 14px;overflow-x:auto;scrollbar-width:none}
+.act-filters::-webkit-scrollbar{display:none}
+.act-filter{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;padding:6px 12px;border-radius:20px;border:1px solid var(--border);color:var(--text4);background:var(--s1);cursor:pointer;white-space:nowrap;transition:all 0.15s;flex-shrink:0}
+.act-filter.active{background:var(--s3);border-color:var(--border2);color:var(--text2)}
 .act-list{margin:0 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
 .act-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;cursor:pointer;transition:background 0.1s;-webkit-tap-highlight-color:transparent}
 .act-row:active{background:var(--s2)}
@@ -305,10 +350,36 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
           </div>
           <div class="prog-track"><div class="prog-fill" id="mp-bar" style="width:0%"></div></div>
           <div class="mp-remain" id="mp-remain">$30,000 remaining to win</div>
+          <div class="mp-stats-row">
+            <div class="mp-stat">
+              <div class="mp-stat-val" id="mp-velocity">—</div>
+              <div class="mp-stat-lbl">AVG / WEEK</div>
+            </div>
+            <div class="mp-stat">
+              <div class="mp-stat-val" id="mp-this-week">—</div>
+              <div class="mp-stat-lbl">THIS WEEK</div>
+            </div>
+            <div class="mp-stat">
+              <div class="mp-stat-val" id="mp-entries">—</div>
+              <div class="mp-stat-lbl">ENTRIES</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WEEKLY SPRINT -->
+        <div class="sprint-wrap">
+          <div class="section-label">THIS WEEK'S SPRINT</div>
+          <div class="sprint-card">
+            <div class="sprint-header">
+              <div class="sprint-title">Weekly leader</div>
+              <div class="sprint-dates" id="sprint-dates">—</div>
+            </div>
+            <div id="sprint-rows"></div>
+          </div>
         </div>
 
         <div class="lb-wrap">
-          <div class="section-label">LEADERBOARD</div>
+          <div class="section-label">ALL-TIME LEADERBOARD</div>
           <div class="lb-card" id="lb-card"></div>
         </div>
 
@@ -371,6 +442,13 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
             <div class="page-sub">Tap your entries to edit or delete</div>
           </div>
         </div>
+        <div class="act-filters">
+          <div class="act-filter active" onclick="setFilter('all', this)">ALL</div>
+          <div class="act-filter" onclick="setFilter('Tareq', this)">TAREQ</div>
+          <div class="act-filter" onclick="setFilter('Daniel', this)">DANIEL</div>
+          <div class="act-filter" onclick="setFilter('Jay', this)">JAY</div>
+          <div class="act-filter" onclick="setFilter('week', this)">THIS WEEK</div>
+        </div>
         <div class="act-list" id="act-list"></div>
       </div>
 
@@ -379,6 +457,7 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
     <!-- NAV -->
     <nav class="nav">
       <button class="nav-item active" id="nav-board" onclick="switchTab('board')">
+        <div class="nav-badge" id="nav-badge"></div>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
         <span>BOARD</span>
       </button>
@@ -489,15 +568,16 @@ const PLAYERS = {
 
 let state = {
   player: null,
-  entries: [],   // { _key, player, amount, source, type, date, notes, ts }
+  entries: [],
   pins: { Tareq: '1234', Daniel: '1234', Jay: '1234' }
 };
 
 let pinBuf = '';
 let db = null;
+let actFilter = 'all';
 
 // PIN CHANGE STATE
-let pmPhase = 'current'; // 'current' | 'new' | 'confirm'
+let pmPhase = 'current';
 let pmBuf = '';
 let pmNewPin = '';
 
@@ -532,10 +612,11 @@ function initFirebase() {
     const active = document.querySelector('.tab-content.active');
     if (active?.id === 'tab-board') renderBoard();
     if (active?.id === 'tab-activity') renderActivity();
+    updateBadge();
   });
 }
 
-async function fbSaveEntry(e)  { try { await db.ref('r30k/entries').push(e); } catch(err) { console.error(err); } }
+async function fbSaveEntry(e)      { try { await db.ref('r30k/entries').push(e); } catch(err) { console.error(err); } }
 async function fbUpdateEntry(k, d) { try { await db.ref('r30k/entries/' + k).update(d); } catch(err) { console.error(err); } }
 async function fbDeleteEntry(k)    { try { await db.ref('r30k/entries/' + k).remove(); } catch(err) { console.error(err); } }
 async function fbSavePins()        { try { await db.ref('r30k/pins').set(state.pins); } catch(err) { console.error(err); } }
@@ -543,11 +624,95 @@ async function fbSavePins()        { try { await db.ref('r30k/pins').set(state.p
 /* ─── HELPERS ─── */
 function fmt(n) { return '$' + Math.round(n).toLocaleString('en-AU'); }
 function fmtDate(ts) { return new Date(ts).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }); }
+
 function getTotals() {
   const t = {};
   Object.keys(PLAYERS).forEach(p => t[p] = 0);
   state.entries.forEach(e => { t[e.player] = (t[e.player] || 0) + e.amount; });
   return t;
+}
+
+// Get Monday of a given date's week
+function getWeekStart(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1 - day);
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getWeekTotals(weekStart) {
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 7);
+  const t = {};
+  Object.keys(PLAYERS).forEach(p => t[p] = 0);
+  state.entries.forEach(e => {
+    const ts = e.ts;
+    if (ts >= weekStart.getTime() && ts < weekEnd.getTime()) {
+      t[e.player] = (t[e.player] || 0) + e.amount;
+    }
+  });
+  return t;
+}
+
+// Weekly velocity: avg per week since first entry
+function getVelocity(player) {
+  const myEntries = state.entries.filter(e => e.player === player);
+  if (!myEntries.length) return 0;
+  const oldest = Math.min(...myEntries.map(e => e.ts));
+  const now = Date.now();
+  const weeksElapsed = Math.max(1, (now - oldest) / (7 * 24 * 60 * 60 * 1000));
+  const total = myEntries.reduce((s, e) => s + e.amount, 0);
+  return total / weeksElapsed;
+}
+
+// Last entry timestamp for a player
+function getLastLogged(player) {
+  const myEntries = state.entries.filter(e => e.player === player);
+  if (!myEntries.length) return null;
+  return Math.max(...myEntries.map(e => e.ts));
+}
+
+function fmtRelativeTime(ts) {
+  if (!ts) return 'never';
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (mins < 2) return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  if (hours < 24) return hours + 'h ago';
+  if (days === 1) return 'yesterday';
+  if (days < 7) return days + 'd ago';
+  return fmtDate(ts);
+}
+
+// Check if player logged 3+ entries this week (on fire)
+function isOnFire(player) {
+  const weekStart = getWeekStart(new Date());
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 7);
+  const count = state.entries.filter(e =>
+    e.player === player && e.ts >= weekStart.getTime() && e.ts < weekEnd.getTime()
+  ).length;
+  return count >= 3;
+}
+
+/* ─── LAST-SEEN / BADGE ─── */
+function getLastSeen() {
+  const key = 'r30k_lastseen_' + state.player;
+  return parseInt(localStorage.getItem(key) || '0', 10);
+}
+function markSeen() {
+  const key = 'r30k_lastseen_' + state.player;
+  localStorage.setItem(key, Date.now().toString());
+  document.getElementById('nav-badge').classList.remove('visible');
+}
+function updateBadge() {
+  const lastSeen = getLastSeen();
+  const hasNew = state.entries.some(e => e.player !== state.player && e.ts > lastSeen);
+  document.getElementById('nav-badge').classList.toggle('visible', hasNew);
 }
 
 /* ─── LOCK SCREEN ─── */
@@ -598,6 +763,7 @@ function initApp() {
   document.getElementById('avatar').textContent = PLAYERS[p].initials;
   document.getElementById('log-sub').textContent = 'Logged as ' + p;
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  updateBadge();
   switchTab('board');
 }
 
@@ -610,7 +776,7 @@ function switchTab(tab) {
   });
   document.getElementById('app-body').scrollTop = 0;
   if (tab === 'board') renderBoard();
-  if (tab === 'activity') renderActivity();
+  if (tab === 'activity') { markSeen(); renderActivity(); }
 }
 
 /* ─── DROPDOWN ─── */
@@ -630,12 +796,44 @@ function renderBoard() {
   const myTotal = totals[p];
   const myPct = Math.min(100, (myTotal / GOAL) * 100);
 
+  // Progress card
   document.getElementById('mp-amount').textContent = fmt(myTotal);
   document.getElementById('mp-pct').textContent = Math.round(myPct) + '%';
   document.getElementById('mp-bar').style.width = myPct + '%';
   const remain = Math.max(0, GOAL - myTotal);
-  document.getElementById('mp-remain').textContent = remain > 0 ? fmt(remain) + ' remaining to win' : 'Goal reached!';
+  document.getElementById('mp-remain').textContent = remain > 0 ? fmt(remain) + ' remaining to win' : '🏆 Goal reached!';
 
+  // Stats row
+  const vel = getVelocity(p);
+  const weekStart = getWeekStart(new Date());
+  const weekTotals = getWeekTotals(weekStart);
+  const myEntries = state.entries.filter(e => e.player === p);
+
+  document.getElementById('mp-velocity').textContent = vel > 0 ? fmt(Math.round(vel)) : '—';
+  document.getElementById('mp-this-week').textContent = weekTotals[p] > 0 ? fmt(weekTotals[p]) : '$0';
+  document.getElementById('mp-entries').textContent = myEntries.length;
+
+  // Weekly sprint
+  const monday = getWeekStart(new Date());
+  const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
+  const fmtShort = d => d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  document.getElementById('sprint-dates').textContent = fmtShort(monday) + ' – ' + fmtShort(sunday);
+
+  const sprintSorted = Object.keys(PLAYERS).sort((a, b) => weekTotals[b] - weekTotals[a]);
+  const sprintRankClasses = ['s-gold', 's-silver', ''];
+  document.getElementById('sprint-rows').innerHTML = sprintSorted.map((name, i) => {
+    const amt = weekTotals[name];
+    const isMe = name === p;
+    const isWinner = i === 0 && amt > 0;
+    const fire = isOnFire(name) ? '<span class="sprint-fire">🔥</span>' : '';
+    return `<div class="sprint-row">
+      <div class="sprint-rank ${sprintRankClasses[i]}">${i + 1}</div>
+      <div class="sprint-name${isMe ? ' is-me' : ''}${isWinner ? ' s-winner' : ''}">${name}${fire}</div>
+      <div class="sprint-amount${isMe ? ' is-me' : ''}${isWinner ? ' s-winner' : ''}">${amt > 0 ? fmt(amt) : '—'}</div>
+    </div>`;
+  }).join('');
+
+  // All-time leaderboard
   const sorted = Object.keys(PLAYERS).sort((a, b) => totals[b] - totals[a]);
   const rankClasses = ['gold', 'silver', ''];
   document.getElementById('lb-card').innerHTML = sorted.map((name, i) => {
@@ -643,19 +841,32 @@ function renderBoard() {
     const pct = Math.min(100, (total / GOAL) * 100);
     const isMe = name === p;
     const fillClass = isMe ? 'lb-fill-me' : (i === 0 ? 'lb-fill-gold' : 'lb-fill-dim');
+    const velocity = getVelocity(name);
+    const lastTs = getLastLogged(name);
+    const fire = isOnFire(name);
+
     return `<div class="lb-row${isMe ? ' is-me' : ''}">
       <div class="lb-rank ${rankClasses[i]}">${i + 1}</div>
       <div class="lb-info">
-        <div class="lb-name${isMe ? ' is-me' : ''}">${name}${isMe ? '<span class="lb-you-tag">YOU</span>' : ''}</div>
-        <div class="lb-bar-row">
+        <div class="lb-name-row">
+          <div class="lb-name${isMe ? ' is-me' : ''}">${name}</div>
+          ${isMe ? '<span class="lb-you-tag">YOU</span>' : ''}
+          ${fire ? '<span class="lb-fire-tag">🔥</span>' : ''}
+        </div>
+        <div class="lb-meta-row">
           <div class="lb-mini-track"><div class="lb-mini-fill ${fillClass}" style="width:${pct}%"></div></div>
           <div class="lb-pct-label">${Math.round(pct)}%</div>
         </div>
       </div>
-      <div class="lb-right"><div class="lb-amount${isMe ? ' is-me' : ''}">${fmt(total)}</div></div>
+      <div class="lb-right">
+        <div class="lb-amount${isMe ? ' is-me' : ''}">${fmt(total)}</div>
+        <div class="lb-velocity${velocity > 0 ? ' active' : ''}">${velocity > 0 ? fmt(Math.round(velocity)) + '/wk' : '—'}</div>
+        <div class="lb-last">${fmtRelativeTime(lastTs)}</div>
+      </div>
     </div>`;
   }).join('');
 
+  // Milestones
   document.getElementById('mile-card').innerHTML = MILESTONES.map(m => {
     const hitters = Object.keys(PLAYERS).filter(n => totals[n] >= m);
     const isWin = m === GOAL;
@@ -694,15 +905,50 @@ function showFormMsg(id, msg, ok) {
   setTimeout(() => el.classList.add('hidden'), 2500);
 }
 
+/* ─── ACTIVITY FILTER ─── */
+function setFilter(f, el) {
+  actFilter = f;
+  document.querySelectorAll('.act-filter').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  renderActivity();
+}
+
 /* ─── ACTIVITY ─── */
 function renderActivity() {
   const list = document.getElementById('act-list');
-  if (!state.entries.length) { list.innerHTML = '<div class="empty-state">NO ENTRIES YET</div>'; return; }
-  const sorted = [...state.entries].sort((a, b) => b.ts - a.ts);
-  list.innerHTML = sorted.map(e => {
+  let entries = [...state.entries];
+
+  if (actFilter === 'week') {
+    const weekStart = getWeekStart(new Date());
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 7);
+    entries = entries.filter(e => e.ts >= weekStart.getTime() && e.ts < weekEnd.getTime());
+  } else if (actFilter !== 'all') {
+    entries = entries.filter(e => e.player === actFilter);
+  }
+
+  if (!entries.length) { list.innerHTML = '<div class="empty-state">NO ENTRIES</div>'; return; }
+
+  const sorted = entries.sort((a, b) => b.ts - a.ts);
+  const lastSeen = getLastSeen();
+
+  // Only show divider when viewing all or by player (not week filter), and only for others' entries
+  const showDivider = actFilter !== 'week';
+  let dividerInserted = false;
+
+  list.innerHTML = sorted.map((e, i) => {
     const initial = e.player[0];
     const mine = e.player === state.player;
-    return `<div class="act-row" onclick="${mine ? `openEditSheet('${e._key}')` : ''}">
+    const isNew = e.player !== state.player && e.ts > lastSeen;
+    const nextEntry = sorted[i + 1];
+    const nextIsOld = !nextEntry || (nextEntry.player === state.player) || nextEntry.ts <= lastSeen;
+
+    let divider = '';
+    if (showDivider && !dividerInserted && isNew && nextIsOld && lastSeen > 0) {
+      dividerInserted = true;
+      divider = `<div class="act-new-divider"><span class="act-new-label">NEW</span></div>`;
+    }
+
+    const row = `<div class="act-row" onclick="${mine ? `openEditSheet('${e._key}')` : ''}">
       <div class="act-badge badge-${initial}">${e.player}</div>
       <div class="act-info">
         <div class="act-source">${e.source}</div>
@@ -713,6 +959,8 @@ function renderActivity() {
         ${mine ? '<div class="act-edit-tag">TAP TO EDIT</div>' : ''}
       </div>
     </div>`;
+
+    return row + divider;
   }).join('');
 }
 
