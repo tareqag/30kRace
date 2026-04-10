@@ -776,7 +776,7 @@ function switchTab(tab) {
   });
   document.getElementById('app-body').scrollTop = 0;
   if (tab === 'board') renderBoard();
-  if (tab === 'activity') { markSeen(); renderActivity(); }
+  if (tab === 'activity') { renderActivity(getLastSeen()); markSeen(); }
 }
 
 /* ─── DROPDOWN ─── */
@@ -914,8 +914,11 @@ function setFilter(f, el) {
 }
 
 /* ─── ACTIVITY ─── */
-function renderActivity() {
+function renderActivity(snapshotLastSeen) {
   const list = document.getElementById('act-list');
+  // If called from Firebase update (no snapshot), use current lastSeen
+  const lastSeen = (snapshotLastSeen !== undefined) ? snapshotLastSeen : getLastSeen();
+
   let entries = [...state.entries];
 
   if (actFilter === 'week') {
@@ -929,9 +932,6 @@ function renderActivity() {
   if (!entries.length) { list.innerHTML = '<div class="empty-state">NO ENTRIES</div>'; return; }
 
   const sorted = entries.sort((a, b) => b.ts - a.ts);
-  const lastSeen = getLastSeen();
-
-  // Only show divider when viewing all or by player (not week filter), and only for others' entries
   const showDivider = actFilter !== 'week';
   let dividerInserted = false;
 
@@ -940,10 +940,11 @@ function renderActivity() {
     const mine = e.player === state.player;
     const isNew = e.player !== state.player && e.ts > lastSeen;
     const nextEntry = sorted[i + 1];
-    const nextIsOld = !nextEntry || (nextEntry.player === state.player) || nextEntry.ts <= lastSeen;
+    const nextIsNew = nextEntry && nextEntry.player !== state.player && nextEntry.ts > lastSeen;
 
     let divider = '';
-    if (showDivider && !dividerInserted && isNew && nextIsOld && lastSeen > 0) {
+    // Insert divider after the last "new" entry (transition point to old)
+    if (showDivider && !dividerInserted && isNew && !nextIsNew) {
       dividerInserted = true;
       divider = `<div class="act-new-divider"><span class="act-new-label">NEW</span></div>`;
     }
