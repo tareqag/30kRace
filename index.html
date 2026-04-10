@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Race $30K">
+<meta name="theme-color" content="#0a0a0a">
+<title>Race to $30K</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@500;600;700&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+
+:root{
+  --bg:#0a0a0a;
+  --s1:#111111;
+  --s2:#171717;
+  --s3:#1e1e1e;
+  --s4:#252525;
+  --border:#222;
+  --border2:#2d2d2d;
+  --text:#f0f0f0;
+  --text2:#a0a0a0;
+  --text3:#505050;
+  --text4:#303030;
+  --gold:#c9a84c;
+  --gold-dim:#c9a84c22;
+  --white-dim:#f0f0f010;
+  --green:#2d6a4f;
+  --green-text:#52b788;
+  --font-display:'Syne',sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --r-sm:10px;
+  --r-md:14px;
+  --r-lg:20px;
+  --r-xl:26px;
+}
+
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+#app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
+
+/* ── SCREENS ── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity 0.2s,transform 0.25s;opacity:0;pointer-events:none;transform:translateY(12px)}
+.screen.visible{opacity:1;pointer-events:all;transform:translateY(0)}
+
+/* ── LOCK SCREEN ── */
+#lock{background:var(--bg);align-items:center;justify-content:flex-start;padding-top:80px;gap:0}
+.lock-wordmark{font-family:var(--font-mono);font-size:11px;letter-spacing:0.22em;color:var(--text4);margin-bottom:56px}
+.lock-heading{font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--text);letter-spacing:-0.8px;margin-bottom:8px}
+.lock-sub{font-size:13px;color:var(--text3);margin-bottom:48px;font-family:var(--font-mono)}
+.pin-dots{display:flex;gap:18px;margin-bottom:48px;height:16px;align-items:center}
+.pin-dot{width:11px;height:11px;border-radius:50%;background:var(--s4);border:1.5px solid var(--border2);transition:all 0.12s}
+.pin-dot.filled{background:var(--text);border-color:var(--text);transform:scale(1.1)}
+.pin-dot.shake{animation:shake 0.35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:300px;padding:0 4px}
+.num-key{height:70px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-family:var(--font-display);font-size:24px;font-weight:500;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.1s,transform 0.08s;user-select:none}
+.num-key:active{background:var(--s4);transform:scale(0.94)}
+.num-key.ghost{background:transparent;border-color:transparent;pointer-events:none}
+.num-key.del-key{font-size:20px;color:var(--text3)}
+.lock-error{font-family:var(--font-mono);font-size:12px;color:#c0392b;margin-top:20px;min-height:16px;letter-spacing:0.04em;transition:opacity 0.2s}
+.lock-error.hidden{opacity:0}
+
+/* ── MAIN APP ── */
+#main{background:var(--bg)}
+.app-body{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.app-body::-webkit-scrollbar{display:none}
+.tab-content{display:none;padding:0 0 100px}
+.tab-content.active{display:block}
+
+/* ── NAV ── */
+.nav{height:72px;background:var(--s1);border-top:1px solid var(--border);display:flex;align-items:stretch;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;color:var(--text4);transition:color 0.15s;border:none;background:none}
+.nav-item svg{width:22px;height:22px;transition:opacity 0.15s}
+.nav-item span{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;font-weight:500}
+.nav-item.active{color:var(--text)}
+
+/* ── SHARED ── */
+.page-top{padding:20px 18px 12px;display:flex;align-items:flex-start;justify-content:space-between}
+.page-title{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);letter-spacing:-0.6px}
+.page-sub{font-family:var(--font-mono);font-size:11px;color:var(--text3);margin-top:4px;letter-spacing:0.04em}
+.px{padding-left:18px;padding-right:18px}
+.section-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text4);margin-bottom:10px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
+.divider{height:1px;background:var(--border)}
+
+/* ── BOARD TAB ── */
+.board-header{padding:24px 18px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.greet-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;color:var(--text4);margin-bottom:5px}
+.greet-name{font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--text);letter-spacing:-0.8px}
+.avatar-circle{width:40px;height:40px;border-radius:50%;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;color:var(--text3);cursor:pointer;flex-shrink:0}
+
+.my-progress{margin:16px 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);padding:18px}
+.mp-label{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.1em;margin-bottom:10px}
+.mp-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+.mp-amount{font-family:var(--font-display);font-size:38px;font-weight:700;color:var(--text);letter-spacing:-1.5px;line-height:1}
+.mp-right{text-align:right}
+.mp-pct{font-family:var(--font-display);font-size:24px;font-weight:600;color:var(--text3);letter-spacing:-0.5px}
+.mp-of{font-family:var(--font-mono);font-size:11px;color:var(--text4);margin-top:3px}
+.prog-track{height:3px;background:var(--s4);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.prog-fill{height:100%;background:var(--text);border-radius:2px;transition:width 0.6s ease}
+.mp-remain{font-family:var(--font-mono);font-size:11px;color:var(--text4);letter-spacing:0.03em}
+
+.lb-wrap{margin:0 18px 20px}
+.lb-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
+.lb-row{display:flex;align-items:center;gap:14px;padding:15px 16px;position:relative}
+.lb-row+.lb-row{border-top:1px solid var(--border)}
+.lb-row.is-me{background:var(--s2)}
+.lb-rank{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text4);min-width:22px;text-align:center;flex-shrink:0}
+.lb-rank.gold{color:var(--gold)}
+.lb-rank.silver{color:#888}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text2)}
+.lb-name.is-me{color:var(--text)}
+.lb-you-tag{font-family:var(--font-mono);font-size:9px;color:var(--text4);letter-spacing:0.08em;margin-left:6px}
+.lb-bar-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.lb-mini-track{flex:1;height:2px;background:var(--s4);border-radius:1px;overflow:hidden}
+.lb-mini-fill{height:100%;border-radius:1px;transition:width 0.6s ease}
+.lb-fill-gold{background:var(--gold-dim);background:var(--gold);}
+.lb-fill-me{background:var(--text)}
+.lb-fill-dim{background:var(--s4)}
+.lb-pct-label{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.04em;min-width:32px;text-align:right}
+.lb-right{text-align:right;flex-shrink:0}
+.lb-amount{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--text2)}
+.lb-amount.is-me{color:var(--text)}
+
+.mile-wrap{margin:0 18px 20px}
+.mile-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
+.mile-row{display:flex;align-items:center;gap:14px;padding:13px 16px}
+.mile-row+.mile-row{border-top:1px solid var(--border)}
+.m-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.m-dot.done{background:var(--text);border-color:var(--text)}
+.m-dot.done::after{content:'';width:7px;height:7px;background:var(--s1);border-radius:50%;display:block}
+.m-dot.next{border-color:var(--text3)}
+.mile-label{flex:1;font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--text4)}
+.mile-label.done{color:var(--text4)}
+.mile-label.next{color:var(--text2)}
+.mile-label.win{color:var(--gold)}
+.mile-who{font-family:var(--font-mono);font-size:10px;color:var(--text4);text-align:right}
+.mile-who.done{color:var(--text3)}
+
+/* ── LOG TAB ── */
+.log-form{margin:0 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px;display:flex;flex-direction:column;gap:16px}
+.f-label{font-family:var(--font-mono);font-size:10px;color:var(--text4);letter-spacing:0.1em;display:block;margin-bottom:7px}
+.f-amount-wrap{position:relative}
+.f-currency{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--font-display);font-size:22px;font-weight:600;color:var(--text3);pointer-events:none}
+.f-amount{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r-md);padding:13px 14px 13px 30px;color:var(--text);font-family:var(--font-display);font-size:22px;font-weight:600;letter-spacing:-0.5px;outline:none;transition:border-color 0.15s}
+.f-amount:focus{border-color:var(--text3)}
+.f-input{width:100%;min-width:0;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r-md);padding:13px 12px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;transition:border-color 0.15s;-webkit-appearance:none;appearance:none}
+.f-input:focus{border-color:var(--text3)}
+.f-input::placeholder{color:var(--text4)}
+input[type="date"].f-input{padding:13px 8px;font-size:11px}
+.f-select{width:100%;min-width:0;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r-md);padding:13px 12px;color:var(--text);font-family:var(--font-mono);font-size:12px;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}
+.f-row>div{min-width:0;overflow:hidden}
+.submit-btn{background:var(--text);color:var(--bg);border:none;border-radius:var(--r-md);padding:15px;font-family:var(--font-display);font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.02em;transition:opacity 0.15s,transform 0.1s;width:100%;margin-top:4px}
+.submit-btn:active{opacity:0.85;transform:scale(0.98)}
+.submit-btn:disabled{opacity:0.25;cursor:not-allowed}
+.form-msg{font-family:var(--font-mono);font-size:12px;text-align:center;min-height:16px;letter-spacing:0.04em;transition:opacity 0.3s}
+.form-msg.success{color:var(--green-text)}
+.form-msg.hidden{opacity:0}
+
+/* ── ACTIVITY TAB ── */
+.act-list{margin:0 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
+.act-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px}
+.act-row+.act-row{border-top:1px solid var(--border)}
+.act-badge{font-family:var(--font-mono);font-size:9px;font-weight:500;letter-spacing:0.1em;padding:4px 9px;border-radius:6px;flex-shrink:0;margin-top:2px;white-space:nowrap}
+.badge-T{background:#0d1f0d;color:#52b788}
+.badge-D{background:#0d0d1f;color:#6b8cde}
+.badge-J{background:#1f0d0d;color:#d4665e}
+.act-info{flex:1;min-width:0}
+.act-source{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act-meta{font-family:var(--font-mono);font-size:11px;color:var(--text4);margin-top:3px;letter-spacing:0.03em}
+.act-amount{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text2);white-space:nowrap;flex-shrink:0}
+.empty-state{padding:48px 20px;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text4);letter-spacing:0.06em}
+
+/* ── TOAST ── */
+.toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--s3);border:1px solid var(--border2);border-radius:var(--r-md);padding:12px 20px;font-family:var(--font-mono);font-size:12px;color:var(--text2);letter-spacing:0.04em;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;z-index:100}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <!-- LOCK SCREEN -->
+  <div id="lock" class="screen visible">
+    <div class="lock-wordmark">RACE TO $30K</div>
+    <div class="lock-heading">Enter passcode</div>
+    <div class="lock-sub">Your code identifies your account</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="dot-0"></div>
+      <div class="pin-dot" id="dot-1"></div>
+      <div class="pin-dot" id="dot-2"></div>
+      <div class="pin-dot" id="dot-3"></div>
+    </div>
+    <div class="numpad">
+      <div class="num-key" onclick="numPress('1')">1</div>
+      <div class="num-key" onclick="numPress('2')">2</div>
+      <div class="num-key" onclick="numPress('3')">3</div>
+      <div class="num-key" onclick="numPress('4')">4</div>
+      <div class="num-key" onclick="numPress('5')">5</div>
+      <div class="num-key" onclick="numPress('6')">6</div>
+      <div class="num-key" onclick="numPress('7')">7</div>
+      <div class="num-key" onclick="numPress('8')">8</div>
+      <div class="num-key" onclick="numPress('9')">9</div>
+      <div class="num-key ghost"></div>
+      <div class="num-key" onclick="numPress('0')">0</div>
+      <div class="num-key del-key" onclick="numDel()">⌫</div>
+    </div>
+    <div class="lock-error hidden" id="lock-error">Incorrect passcode</div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="main" class="screen">
+
+    <div class="app-body" id="app-body">
+
+      <!-- BOARD -->
+      <div class="tab-content active" id="tab-board">
+        <div class="board-header">
+          <div>
+            <div class="greet-label">WELCOME BACK</div>
+            <div class="greet-name" id="greet-name">—</div>
+          </div>
+          <div class="avatar-circle" id="avatar" onclick="logout()">—</div>
+        </div>
+
+        <div class="my-progress" id="my-progress">
+          <div class="mp-label">YOUR PROGRESS</div>
+          <div class="mp-row">
+            <div class="mp-amount" id="mp-amount">$0</div>
+            <div class="mp-right">
+              <div class="mp-pct" id="mp-pct">0%</div>
+              <div class="mp-of">of $30,000</div>
+            </div>
+          </div>
+          <div class="prog-track"><div class="prog-fill" id="mp-bar" style="width:0%"></div></div>
+          <div class="mp-remain" id="mp-remain">$30,000 remaining to win</div>
+        </div>
+
+        <div class="lb-wrap">
+          <div class="section-label">LEADERBOARD</div>
+          <div class="lb-card" id="lb-card"></div>
+        </div>
+
+        <div class="mile-wrap">
+          <div class="section-label">MILESTONES</div>
+          <div class="mile-card" id="mile-card"></div>
+        </div>
+      </div>
+
+      <!-- LOG -->
+      <div class="tab-content" id="tab-log">
+        <div class="page-top">
+          <div>
+            <div class="page-title">Log revenue</div>
+            <div class="page-sub" id="log-sub">Logged as —</div>
+          </div>
+        </div>
+        <div class="log-form">
+          <div>
+            <label class="f-label">AMOUNT</label>
+            <div class="f-amount-wrap">
+              <span class="f-currency">$</span>
+              <input class="f-amount" id="f-amount" type="number" min="1" placeholder="0" inputmode="decimal">
+            </div>
+          </div>
+          <div>
+            <label class="f-label">SOURCE / DESCRIPTION</label>
+            <input class="f-input" id="f-source" type="text" placeholder="e.g. Gym client onboarding">
+          </div>
+          <div class="f-row">
+            <div>
+              <label class="f-label">TYPE</label>
+              <select class="f-select" id="f-type">
+                <option value="Sale">Sale</option>
+                <option value="Client deal">Client deal</option>
+                <option value="Recurring">Recurring</option>
+                <option value="Product">Product</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="f-label">DATE</label>
+              <input class="f-input" id="f-date" type="date">
+            </div>
+          </div>
+          <div>
+            <label class="f-label">NOTES <span style="color:var(--text4)">(optional)</span></label>
+            <input class="f-input" id="f-notes" type="text" placeholder="Any context...">
+          </div>
+          <button class="submit-btn" onclick="submitEntry()">Add entry</button>
+          <div class="form-msg hidden" id="form-msg"></div>
+        </div>
+      </div>
+
+      <!-- ACTIVITY -->
+      <div class="tab-content" id="tab-activity">
+        <div class="page-top">
+          <div>
+            <div class="page-title">Activity</div>
+            <div class="page-sub">All entries · most recent first</div>
+          </div>
+        </div>
+        <div class="act-list" id="act-list"></div>
+      </div>
+
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav">
+      <button class="nav-item active" id="nav-board" onclick="switchTab('board')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+        <span>BOARD</span>
+      </button>
+      <button class="nav-item" id="nav-log" onclick="switchTab('log')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="12" x2="15" y2="14.2"/></svg>
+        <span>LOG</span>
+      </button>
+      <button class="nav-item" id="nav-activity" onclick="switchTab('activity')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>ACTIVITY</span>
+      </button>
+    </nav>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+</div>
+<script>
+const GOAL = 30000;
+const MILESTONES = [5000, 10000, 15000, 20000, 25000, 30000];
+const PLAYERS = {
+  Tareq:  { pin: '1234', initials: 'TQ', badge: 'badge-T' },
+  Daniel: { pin: '1234', initials: 'DN', badge: 'badge-D' },
+  Jay:    { pin: '1234', initials: 'JY', badge: 'badge-J' }
+};
+
+let state = {
+  player: null,
+  entries: [],
+  pins: { Tareq: '1234', Daniel: '1234', Jay: '1234' }
+};
+
+let pinBuf = '';
+let db = null;
+
+function initFirebase() {
+  const cfg = {
+    apiKey: "AIzaSyCNIS3a4kpa8zRhT1oY4rS0_nTTG-NA1EU",
+    authDomain: "krace-c2f30.firebaseapp.com",
+    databaseURL: "https://krace-c2f30-default-rtdb.asia-southeast1.firebaseapp.com",
+    projectId: "krace-c2f30",
+    storageBucket: "krace-c2f30.firebasestorage.app",
+    messagingSenderId: "241288066715",
+    appId: "1:241288066715:web:fc1536e8bb87e4cbfab83e"
+  };
+  firebase.initializeApp(cfg);
+  db = firebase.database();
+
+  // Live listener — updates board in real time across all phones
+  db.ref('r30k').on('value', snap => {
+    const d = snap.val();
+    if (d) {
+      state.entries = d.entries ? Object.values(d.entries) : [];
+      if (d.pins) state.pins = { ...state.pins, ...d.pins };
+    } else {
+      state.entries = [];
+    }
+    // Re-render whichever tab is active
+    const activeTab = document.querySelector('.tab-content.active');
+    if (activeTab && activeTab.id === 'tab-board' && state.player) renderBoard();
+    if (activeTab && activeTab.id === 'tab-activity' && state.player) renderActivity();
+  });
+}
+
+async function saveEntry(entry) {
+  try {
+    await db.ref('r30k/entries').push(entry);
+  } catch(e) { console.error(e); }
+}
+
+async function savePins() {
+  try {
+    await db.ref('r30k/pins').set(state.pins);
+  } catch(e) { console.error(e); }
+}
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('en-AU');
+}
+
+function fmtDate(ts) {
+  return new Date(ts).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+}
+
+function getTotals() {
+  const t = {};
+  Object.keys(PLAYERS).forEach(p => t[p] = 0);
+  state.entries.forEach(e => t[e.player] = (t[e.player] || 0) + e.amount);
+  return t;
+}
+
+/* ── PIN ── */
+function numPress(d) {
+  if (pinBuf.length >= 4) return;
+  pinBuf += d;
+  updateDots();
+  if (pinBuf.length === 4) setTimeout(checkPin, 80);
+}
+
+function numDel() {
+  pinBuf = pinBuf.slice(0, -1);
+  updateDots();
+  document.getElementById('lock-error').classList.add('hidden');
+}
+
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('dot-' + i).classList.toggle('filled', i < pinBuf.length);
+  }
+}
+
+function checkPin() {
+  for (const [name, cfg] of Object.entries(PLAYERS)) {
+    if (pinBuf === state.pins[name]) {
+      state.player = name;
+      pinBuf = '';
+      updateDots();
+      document.getElementById('lock').classList.remove('visible');
+      document.getElementById('main').classList.add('visible');
+      initApp();
+      return;
+    }
+  }
+  const dots = document.getElementById('pin-dots');
+  dots.classList.add('shake');
+  document.getElementById('lock-error').classList.remove('hidden');
+  setTimeout(() => { dots.classList.remove('shake'); pinBuf = ''; updateDots(); }, 400);
+}
+
+function logout() {
+  state.player = null;
+  pinBuf = '';
+  updateDots();
+  document.getElementById('lock-error').classList.add('hidden');
+  document.getElementById('main').classList.remove('visible');
+  document.getElementById('lock').classList.add('visible');
+}
+
+/* ── APP INIT ── */
+function initApp() {
+  const p = state.player;
+  document.getElementById('greet-name').textContent = p;
+  document.getElementById('avatar').textContent = PLAYERS[p].initials;
+  document.getElementById('log-sub').textContent = 'Logged as ' + p;
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  switchTab('board');
+}
+
+/* ── TABS ── */
+function switchTab(tab) {
+  ['board','log','activity'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('nav-' + t).classList.toggle('active', t === tab);
+  });
+  document.getElementById('app-body').scrollTop = 0;
+  if (tab === 'board') renderBoard();
+  if (tab === 'activity') renderActivity();
+}
+
+/* ── BOARD ── */
+function renderBoard() {
+  const totals = getTotals();
+  const p = state.player;
+  const myTotal = totals[p];
+  const myPct = Math.min(100, (myTotal / GOAL) * 100);
+
+  document.getElementById('mp-amount').textContent = fmt(myTotal);
+  document.getElementById('mp-pct').textContent = Math.round(myPct) + '%';
+  document.getElementById('mp-bar').style.width = myPct + '%';
+  const remain = Math.max(0, GOAL - myTotal);
+  document.getElementById('mp-remain').textContent = remain > 0 ? fmt(remain) + ' remaining to win' : 'Goal reached!';
+
+  const sorted = Object.keys(PLAYERS).sort((a, b) => totals[b] - totals[a]);
+  const rankClasses = ['gold', 'silver', ''];
+  const fillClasses = ['lb-fill-gold', 'lb-fill-me', 'lb-fill-dim'];
+
+  const lb = document.getElementById('lb-card');
+  lb.innerHTML = sorted.map((name, i) => {
+    const total = totals[name];
+    const pct = Math.min(100, (total / GOAL) * 100);
+    const isMe = name === p;
+    const fillClass = isMe ? 'lb-fill-me' : (i === 0 ? 'lb-fill-gold' : 'lb-fill-dim');
+    return `<div class="lb-row${isMe ? ' is-me' : ''}">
+      <div class="lb-rank ${rankClasses[i]}">${i + 1}</div>
+      <div class="lb-info">
+        <div class="lb-name${isMe ? ' is-me' : ''}">${name}${isMe ? '<span class="lb-you-tag">YOU</span>' : ''}</div>
+        <div class="lb-bar-row">
+          <div class="lb-mini-track"><div class="lb-mini-fill ${fillClass}" style="width:${pct}%"></div></div>
+          <div class="lb-pct-label">${Math.round(pct)}%</div>
+        </div>
+      </div>
+      <div class="lb-right">
+        <div class="lb-amount${isMe ? ' is-me' : ''}">${fmt(total)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const miles = document.getElementById('mile-card');
+  miles.innerHTML = MILESTONES.map(m => {
+    const hitters = Object.keys(PLAYERS).filter(n => totals[n] >= m);
+    const isWin = m === GOAL;
+    const done = hitters.length > 0;
+    const next = !done && Object.values(totals).some(v => v > 0) && MILESTONES.find(x => Object.values(totals).every(v => v < x)) === m;
+    const dotClass = done ? 'done' : (next ? 'next' : '');
+    const labelClass = done ? 'done' : (next ? 'next' : isWin ? 'win' : '');
+    return `<div class="mile-row">
+      <div class="m-dot ${dotClass}"></div>
+      <div class="mile-label ${labelClass}">${isWin ? fmt(m) + ' — winner' : fmt(m)}</div>
+      <div class="mile-who ${done ? 'done' : ''}">${done ? hitters.join(', ') : ''}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── LOG ENTRY ── */
+function submitEntry() {
+  const amount = parseFloat(document.getElementById('f-amount').value);
+  const source = document.getElementById('f-source').value.trim();
+  const type = document.getElementById('f-type').value;
+  const date = document.getElementById('f-date').value;
+  const notes = document.getElementById('f-notes').value.trim();
+
+  if (!amount || amount <= 0) { showFormMsg('Enter a valid amount', false); return; }
+  if (!source) { showFormMsg('Enter a source / description', false); return; }
+
+  const entry = { player: state.player, amount, source, type, date, notes, ts: Date.now() };
+  saveEntry(entry);
+
+  document.getElementById('f-amount').value = '';
+  document.getElementById('f-source').value = '';
+  document.getElementById('f-notes').value = '';
+  showFormMsg('Entry added!', true);
+  showToast('+ ' + fmt(amount) + ' logged');
+}
+
+function showFormMsg(msg, ok) {
+  const el = document.getElementById('form-msg');
+  el.textContent = msg;
+  el.className = 'form-msg ' + (ok ? 'success' : '');
+  setTimeout(() => el.classList.add('hidden'), 2500);
+}
+
+/* ── ACTIVITY ── */
+function renderActivity() {
+  const list = document.getElementById('act-list');
+  if (state.entries.length === 0) {
+    list.innerHTML = '<div class="empty-state">NO ENTRIES YET</div>';
+    return;
+  }
+  const sorted = [...state.entries].sort((a, b) => b.ts - a.ts);
+  list.innerHTML = sorted.map(e => {
+    const initial = e.player[0];
+    return `<div class="act-row">
+      <div class="act-badge badge-${initial}">${e.player}</div>
+      <div class="act-info">
+        <div class="act-source">${e.source}</div>
+        <div class="act-meta">${e.type} · ${e.date || fmtDate(e.ts)}</div>
+      </div>
+      <div class="act-amount">+${fmt(e.amount)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ── BOOT ── */
+initFirebase();
+</script>
+</body>
+</html>
