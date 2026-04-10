@@ -133,7 +133,15 @@ html,body{height:100%;overflow:hidden;background:var(--bg)}
 .mp-stat-lbl{font-family:var(--font-mono);font-size:9px;color:var(--text4);letter-spacing:0.08em;margin-top:3px}
 .mp-remain{font-family:var(--font-mono);font-size:11px;color:var(--text4);letter-spacing:0.03em}
 
-/* WEEKLY SPRINT */
+/* SPRINT TOGGLE */
+.sprint-toggle{display:flex;gap:6px;background:var(--s2);border-radius:20px;padding:3px}
+.sprint-tog-btn{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;padding:5px 12px;border-radius:16px;border:none;background:transparent;color:var(--text4);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.sprint-tog-btn.active{background:var(--s4);color:var(--text2)}
+.sprint-subtabs{display:flex;gap:0;border-bottom:1px solid var(--border)}
+.sprint-subtab{flex:1;font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;padding:10px;text-align:center;color:var(--text4);cursor:pointer;transition:all 0.15s;border:none;background:transparent}
+.sprint-subtab.active{color:var(--text2);border-bottom:1px solid var(--text3);margin-bottom:-1px}
+
+
 .sprint-wrap{margin:0 18px 20px}
 .sprint-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
 .sprint-header{padding:14px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
@@ -356,8 +364,8 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
               <div class="mp-stat-lbl">AVG / WEEK</div>
             </div>
             <div class="mp-stat">
-              <div class="mp-stat-val" id="mp-this-week">—</div>
-              <div class="mp-stat-lbl">THIS WEEK</div>
+              <div class="mp-stat-val" id="mp-this-month">—</div>
+              <div class="mp-stat-lbl">THIS MONTH</div>
             </div>
             <div class="mp-stat">
               <div class="mp-stat-val" id="mp-entries">—</div>
@@ -366,12 +374,22 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
           </div>
         </div>
 
-        <!-- WEEKLY SPRINT -->
+        <!-- SPRINT -->
         <div class="sprint-wrap">
-          <div class="section-label">THIS WEEK'S SPRINT</div>
+          <div class="section-label" id="sprint-section-label">SPRINT</div>
           <div class="sprint-card">
             <div class="sprint-header">
-              <div class="sprint-title">Weekly leader</div>
+              <div class="sprint-title" id="sprint-title">Weekly leader</div>
+              <div class="sprint-toggle">
+                <button class="sprint-tog-btn active" id="tog-week" onclick="setSprintMode('week')">WEEK</button>
+                <button class="sprint-tog-btn" id="tog-month" onclick="setSprintMode('month')">MONTH</button>
+              </div>
+            </div>
+            <div class="sprint-subtabs" id="sprint-subtabs" style="display:none">
+              <button class="sprint-subtab active" id="subtab-cal" onclick="setMonthSubtab('cal')">THIS MONTH</button>
+              <button class="sprint-subtab" id="subtab-roll" onclick="setMonthSubtab('roll')">ROLLING 30</button>
+            </div>
+            <div class="sprint-dates-row" style="padding:8px 16px 4px">
               <div class="sprint-dates" id="sprint-dates">—</div>
             </div>
             <div id="sprint-rows"></div>
@@ -448,6 +466,8 @@ input[type="date"].f-input{padding:13px 8px;font-size:11px}
           <div class="act-filter" onclick="setFilter('Daniel', this)">DANIEL</div>
           <div class="act-filter" onclick="setFilter('Jay', this)">JAY</div>
           <div class="act-filter" onclick="setFilter('week', this)">THIS WEEK</div>
+          <div class="act-filter" onclick="setFilter('month', this)">THIS MONTH</div>
+          <div class="act-filter" onclick="setFilter('rolling30', this)">ROLLING 30</div>
         </div>
         <div class="act-list" id="act-list"></div>
       </div>
@@ -575,6 +595,8 @@ let state = {
 let pinBuf = '';
 let db = null;
 let actFilter = 'all';
+let sprintMode = 'week';    // 'week' | 'month'
+let monthSubtab = 'cal';    // 'cal' | 'roll'
 
 // PIN CHANGE STATE
 let pmPhase = 'current';
@@ -652,6 +674,29 @@ function getWeekTotals(weekStart) {
     if (ts >= weekStart.getTime() && ts < weekEnd.getTime()) {
       t[e.player] = (t[e.player] || 0) + e.amount;
     }
+  });
+  return t;
+}
+
+function getCalMonthTotals() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1);
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const t = {};
+  Object.keys(PLAYERS).forEach(p => t[p] = 0);
+  state.entries.forEach(e => {
+    if (e.ts >= start.getTime() && e.ts < end.getTime())
+      t[e.player] = (t[e.player] || 0) + e.amount;
+  });
+  return t;
+}
+
+function getRolling30Totals() {
+  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const t = {};
+  Object.keys(PLAYERS).forEach(p => t[p] = 0);
+  state.entries.forEach(e => {
+    if (e.ts >= cutoff) t[e.player] = (t[e.player] || 0) + e.amount;
   });
   return t;
 }
@@ -789,6 +834,62 @@ function closeDropdown() {
 }
 document.addEventListener('click', () => closeDropdown());
 
+/* ─── SPRINT TOGGLE ─── */
+function setSprintMode(mode) {
+  sprintMode = mode;
+  document.getElementById('tog-week').classList.toggle('active', mode === 'week');
+  document.getElementById('tog-month').classList.toggle('active', mode === 'month');
+  document.getElementById('sprint-subtabs').style.display = mode === 'month' ? 'flex' : 'none';
+  renderSprint();
+}
+function setMonthSubtab(sub) {
+  monthSubtab = sub;
+  document.getElementById('subtab-cal').classList.toggle('active', sub === 'cal');
+  document.getElementById('subtab-roll').classList.toggle('active', sub === 'roll');
+  renderSprint();
+}
+function renderSprint() {
+  const p = state.player;
+  const fmtShort = d => d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  let sprintTotals, dateLabel, titleText;
+
+  if (sprintMode === 'week') {
+    const monday = getWeekStart(new Date());
+    const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
+    sprintTotals = getWeekTotals(monday);
+    dateLabel = fmtShort(monday) + ' – ' + fmtShort(sunday);
+    titleText = 'Weekly leader';
+  } else if (monthSubtab === 'cal') {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    sprintTotals = getCalMonthTotals();
+    dateLabel = start.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' });
+    titleText = 'Monthly leader';
+  } else {
+    const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    sprintTotals = getRolling30Totals();
+    dateLabel = fmtShort(cutoff) + ' – ' + fmtShort(new Date());
+    titleText = 'Rolling 30 leader';
+  }
+
+  document.getElementById('sprint-title').textContent = titleText;
+  document.getElementById('sprint-dates').textContent = dateLabel;
+
+  const sorted = Object.keys(PLAYERS).sort((a, b) => sprintTotals[b] - sprintTotals[a]);
+  const rankClasses = ['s-gold', 's-silver', ''];
+  document.getElementById('sprint-rows').innerHTML = sorted.map((name, i) => {
+    const amt = sprintTotals[name];
+    const isMe = name === p;
+    const isWinner = i === 0 && amt > 0;
+    const fire = isOnFire(name) ? '<span class="sprint-fire">🔥</span>' : '';
+    return `<div class="sprint-row">
+      <div class="sprint-rank ${rankClasses[i]}">${i + 1}</div>
+      <div class="sprint-name${isMe ? ' is-me' : ''}${isWinner ? ' s-winner' : ''}">${name}${fire}</div>
+      <div class="sprint-amount${isMe ? ' is-me' : ''}${isWinner ? ' s-winner' : ''}">${amt > 0 ? fmt(amt) : '—'}</div>
+    </div>`;
+  }).join('');
+}
+
 /* ─── BOARD ─── */
 function renderBoard() {
   const totals = getTotals();
@@ -805,33 +906,15 @@ function renderBoard() {
 
   // Stats row
   const vel = getVelocity(p);
-  const weekStart = getWeekStart(new Date());
-  const weekTotals = getWeekTotals(weekStart);
+  const monthTotals = getCalMonthTotals();
   const myEntries = state.entries.filter(e => e.player === p);
 
   document.getElementById('mp-velocity').textContent = vel > 0 ? fmt(Math.round(vel)) : '—';
-  document.getElementById('mp-this-week').textContent = weekTotals[p] > 0 ? fmt(weekTotals[p]) : '$0';
+  document.getElementById('mp-this-month').textContent = monthTotals[p] > 0 ? fmt(monthTotals[p]) : '$0';
   document.getElementById('mp-entries').textContent = myEntries.length;
 
-  // Weekly sprint
-  const monday = getWeekStart(new Date());
-  const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
-  const fmtShort = d => d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
-  document.getElementById('sprint-dates').textContent = fmtShort(monday) + ' – ' + fmtShort(sunday);
-
-  const sprintSorted = Object.keys(PLAYERS).sort((a, b) => weekTotals[b] - weekTotals[a]);
-  const sprintRankClasses = ['s-gold', 's-silver', ''];
-  document.getElementById('sprint-rows').innerHTML = sprintSorted.map((name, i) => {
-    const amt = weekTotals[name];
-    const isMe = name === p;
-    const isWinner = i === 0 && amt > 0;
-    const fire = isOnFire(name) ? '<span class="sprint-fire">🔥</span>' : '';
-    return `<div class="sprint-row">
-      <div class="sprint-rank ${sprintRankClasses[i]}">${i + 1}</div>
-      <div class="sprint-name${isMe ? ' is-me' : ''}${isWinner ? ' s-winner' : ''}">${name}${fire}</div>
-      <div class="sprint-amount${isMe ? ' is-me' : ''}${isWinner ? ' s-winner' : ''}">${amt > 0 ? fmt(amt) : '—'}</div>
-    </div>`;
-  }).join('');
+  // Sprint card
+  renderSprint();
 
   // All-time leaderboard
   const sorted = Object.keys(PLAYERS).sort((a, b) => totals[b] - totals[a]);
@@ -925,6 +1008,14 @@ function renderActivity(snapshotLastSeen) {
     const weekStart = getWeekStart(new Date());
     const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 7);
     entries = entries.filter(e => e.ts >= weekStart.getTime() && e.ts < weekEnd.getTime());
+  } else if (actFilter === 'month') {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime();
+    entries = entries.filter(e => e.ts >= start && e.ts < end);
+  } else if (actFilter === 'rolling30') {
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    entries = entries.filter(e => e.ts >= cutoff);
   } else if (actFilter !== 'all') {
     entries = entries.filter(e => e.player === actFilter);
   }
@@ -932,7 +1023,7 @@ function renderActivity(snapshotLastSeen) {
   if (!entries.length) { list.innerHTML = '<div class="empty-state">NO ENTRIES</div>'; return; }
 
   const sorted = entries.sort((a, b) => b.ts - a.ts);
-  const showDivider = actFilter !== 'week';
+  const showDivider = actFilter !== 'week' && actFilter !== 'month' && actFilter !== 'rolling30';
   let dividerInserted = false;
 
   list.innerHTML = sorted.map((e, i) => {
